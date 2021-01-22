@@ -38,9 +38,9 @@
         ?>
 
                 <tr>
-                    <td><img src="assets/images/anuncios/<?php echo $anuncio['url']; ?> " border="0" /></td>
-                    <td><?php echo $anuncio['titulo']; ?></td>
-                    <td><?php echo number_format($anuncio['valor'],2); ?></td>
+                    <td><img src="assets/images/anuncios/<?php echo $anuncios['url']; ?> " border="0" /></td>
+                    <td><?php echo $anuncios['titulo']; ?></td>
+                    <td><?php echo number_format($anuncios['valor'],2); ?></td>
                     <td></td>
                 </tr>
 
