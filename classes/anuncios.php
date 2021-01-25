@@ -49,6 +49,28 @@
 
 
             }
+            public function getAnuncio($id){
+                $array=array();
+                global $pdo;
+
+                $sql= $pdo->prepare("SELECT * FROM anuncios WHERE id = :id");
+                $sql->bindValue(":id", $id);
+                $sql->execute();
+
+                if($Sql->rowCount() > 0 ){
+                    $array= $sql->fetch();
+
+
+                }
+                return $array;
+
+            }
+
+
+
+
+
+
 
     }
 

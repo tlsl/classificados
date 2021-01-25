@@ -11,7 +11,8 @@ require 'classes/anuncios.php';
     $a=new Anuncios();
 
 if(isset($_GET['id']) && !empty($_GET['id'])) {
- $a->excluirAnuncio($_GET['id']);
+    
+ $a->exluirAnuncio($_GET['id']);
 }
 header('Location: meus-anuncios.php');
 ?>
