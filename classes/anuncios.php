@@ -2,6 +2,79 @@
 
     class Anuncios{
 
+
+
+
+        public function getTotalAnuncios(){
+            global $pdo;
+
+            $sql=$pdo->query("SELECT COUNT(*) as c FROM anuncios");
+            $row=$sql->fetch();
+
+            return $row['c'];
+
+        }
+
+
+
+
+        public function getTotalUsuarios(){
+            global $pdo;
+
+            $sql=$pdo->query("SELECT COUNT(*) as c FROM usuarios");
+            $row=$sql->fetch();
+
+            return $row['c'];
+
+        }
+
+
+        public function getUltimosAnuncios($page, $perPage, $filtros) {
+            global $pdo;
+    
+            $offset = ($page - 1) * $perPage;
+    
+            $array = array();
+    
+            $filtrostring = array('1=1');
+            if(!empty($filtros['categoria'])) {
+                $filtrostring[] = 'anuncios.id_categoria = :id_categoria';
+            }
+            if(!empty($filtros['preco'])) {
+                $filtrostring[] = 'anuncios.valor BETWEEN :preco1 AND :preco2';
+            }
+            if(!empty($filtros['estado'])) {
+                $filtrostring[] = 'anuncios.estado = :estado';
+            }
+    
+            $sql = $pdo->prepare("SELECT
+                *,
+                (select anuncios_imagens.url from anuncios_imagens where anuncios_imagens.id_anuncio = anuncios.id limit 1) as url,
+                (select categorias.nome from categorias where categorias.id = anuncios.id_categoria) as categoria
+                FROM anuncios WHERE ".implode(' AND ', $filtrostring)." ORDER BY id DESC LIMIT $offset, $perPage");
+            
+            if(!empty($filtros['categoria'])) {
+                $sql->bindValue(':id_categoria', $filtros['categoria']);
+            }
+            if(!empty($filtros['preco'])) {
+                $preco = explode('-', $filtros['preco']);
+                $sql->bindValue(':preco1', $preco[0]);
+                $sql->bindValue(':preco2', $preco[1]);
+            }
+            if(!empty($filtros['estado'])) {
+                $sql->bindValue(':estado', $filtros['estado']);
+            }
+    
+            $sql->execute();
+    
+            if($sql->rowCount() > 0) {
+                $array = $sql->fetchAll();
+            }
+    
+            return $array;
+        }
+
+
         public function getMeusAnuncios(){
             global $pdo;
 
