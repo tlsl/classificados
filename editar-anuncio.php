@@ -15,13 +15,21 @@ if(isset($_POST['titulo']) && !empty($_POST['titulo'])) {
 	$categoria = addslashes($_POST['categoria']);
 	$valor = addslashes($_POST['valor']);
 	$descricao = addslashes($_POST['descricao']);
-	$estado = addslashes($_POST['estado']);
+    $estado = addslashes($_POST['estado']);
 
-	$a->addAnuncio($titulo, $categoria,$valor, $descricao, $estado);
+    if(isset($_FILES´['fotos'])){
+         $fotos= $_FILES['fotos'];
+    }else{
+        $fotos = array();
+    }
+
+   
+
+	$a->editAnuncio($titulo, $categoria,$valor, $descricao, $estado,$fotos,$_GET['id']);
 
 	?>
 	<div class="alert alert-success">
-		Produto adicionado com sucesso!
+		Produto editado com sucesso!
 	</div>
 	<?php
 }
@@ -45,14 +53,14 @@ else {
 
 		<div class="form-group">
 			<label for="categoria">Categoria:</label>
-			<select name="categoria" id="categoria" class="form-control">
+			<select name="categoria" id="categoria" class="form-control" >
 				<?php
 				require 'classes/categorias.php';
 				$c = new Categorias();
 				$cats = $c->getLista();
 				foreach($cats as $cat):
 				?>
-				<option value="<?php echo $cat['id']; ?>"><?php echo utf8_encode($cat['nome']); ?></option>
+				<option value="<?php echo $cat['id']; ?>"   <?php echo ($info['id_categoria']==$cat['id'])? 'selected="selected"':''; ?>><?php echo utf8_encode($cat['nome']); ?></option>
 				<?php
 				endforeach;
 				?>
@@ -64,7 +72,7 @@ else {
 		</div>
 		<div class="form-group">
 			<label for="valor">Valor:</label>
-			<input type="text" name="valor" id="valor" class="form-control"  value="<?php echo $info['titulo']; ?> />
+			<input type="text" name="valor" id="valor" class="form-control"  value="<?php echo $info['valor']; ?>" />
 		</div>
 		<div class="form-group">
 			<label for="descricao">Descrição:</label>
@@ -72,12 +80,33 @@ else {
 		</div>
 		<div class="form-group">
 			<label for="estado">Estado de Conservação:</label>
-			<select name="estado" id="estado" class="form-control">
-				<option value="0">Ruim</option>
-				<option value="1">Bom</option>
-				<option value="2">Ótimo</option>
+			<select name="estado" id="estado" class="form-control"  >
+				<option value="0" <?php echo ($info['estado']=='0')? 'selected="selected"':''; ?>>Ruim</option>
+				<option value="1"  <?php echo ($info['estado']=='1')? 'selected="selected"':''; ?>>Bom</option>
+				<option value="2"  <?php echo ($info['estado']=='2')? 'selected="selected"':''; ?>>Ótimo</option>
 			</select>
 		</div>
+        <div class="form-group">
+                <label for="add_foto">Fotos do anuncio: </label>
+                <input type="file" name="fotos[]"  multiple="multiple" /><br/>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">Fotos</div>
+                    <div class="panel-body"></div>
+
+                    <?php foreach ($info['fotos'] as $fotos): ?>
+                        <div class="foto_item">
+                            <img src="assets/images/anuncios/<?php echo $foto['url']; ?> " class="img-thumbnail"  border="0"; /> </br>
+
+                            <a href="excluir-foto.php?id=<?php echo $foto['id']; ?>" class="btn btn-default">Excluir</a>
+
+                        </div>
+
+                    
+                    <?php endforeach; ?>
+
+                </div>
+        </div>
 		<input type="submit" value="salvar" class="btn btn-default" />
 	</form>
 
